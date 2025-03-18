@@ -1,5 +1,6 @@
 import os
 import cv2 as cv
+import cv2
 import sys
 from zipfile import ZipFile
 from urllib.request import urlretrieve
@@ -34,9 +35,7 @@ if not os.path.exists(asset_zip_path):
 # ====================================================================
 
 
-s = 0
-if len(sys.argv) > 1:
-    s = sys.argv[1]
+s = "data/Harry Potter and the Prisoner of Azkaban (2004).mkv"
 
 cap = cv2.VideoCapture(s)
 
@@ -59,7 +58,6 @@ while cap.isOpened():
     cv.imshow('frame', gray)
     if cv.waitKey(1) == ord('q'):
         break
-
 
     # Create a 4D blob from a frame.
     blob = cv2.dnn.blobFromImage(frame, 1.0, (in_width, in_height), mean, swapRB=False, crop=False)
@@ -91,7 +89,7 @@ while cap.isOpened():
     t, _ = net.getPerfProfile()
     label = "Inference time: %.2f ms" % (t * 1000.0 / cv2.getTickFrequency())
     cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-    cv2.imshow(win_name, frame)
+    cv2.imshow('frame', frame)
 
-source.release()
-cv2.destroyWindow(win_name)
+cap.release()
+cv2.destroyAllWindows()
