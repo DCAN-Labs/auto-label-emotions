@@ -171,6 +171,7 @@ data/FERG_DB_256/mery/.DS_Store
 data/FERG_DB_256/ray/.DS_Store
 opencv_face_detector_uint8.pb
 books/978-3-319-54184-6.pdf
-data/AirMater/AirMater.jpg
-data/Bao/Bao.jpg
-data/HawaiianVacation/HawaiianVacation.jpg
+data_other/AirMater/AirMater.jpg
+data_other/Bao/Bao.jpg
+data_other/HawaiianVacation/HawaiianVacation.jpg
+data/
