@@ -176,3 +176,5 @@ data_other/Bao/Bao.jpg
 data_other/HawaiianVacation/HawaiianVacation.jpg
 data/
 data_other/FERG_DB_256/.DS_Store
+best_model.pth
+scripts/auto-label-emotions.code-workspace
