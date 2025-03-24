@@ -9,7 +9,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "data_other/HawaiianVacation/HawaiianVacationToy_000.jpg"
+                "data_other/HawaiianVacation/HawaiianVacationMan_000.jpg"
             ]
         }
     ]
