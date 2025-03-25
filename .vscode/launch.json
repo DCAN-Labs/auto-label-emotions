@@ -11,6 +11,17 @@
             "args": [
                 "data_other/HawaiianVacation/HawaiianVacationMan_000.jpg"
             ]
+        },
+        {
+            "name": "pytorch_image_classifier_png_data",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/cdni/pytorch_image_classifier_png_data.py",
+            "console": "integratedTerminal",
+            "args": [
+                "./data/"
+            ]
         }
+
     ]
 }

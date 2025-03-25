@@ -237,7 +237,7 @@ def evaluate_model(model, test_loader, device='cuda'):
     return accuracy, cm
 
 # Example usage
-def main():
+def main(data_root_folder):
     # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
@@ -250,7 +250,7 @@ def main():
     ])
     
     # Verify data directories exist
-    for data_dir in ['./data/train', './data/val', './data/test']:
+    for data_dir in [f'{data_root_folder}train', f'{data_root_folder}val', f'{data_root_folder}test']:
         if not os.path.exists(data_dir):
             os.makedirs(data_dir, exist_ok=True)
             print(f"Created directory: {data_dir}")
@@ -259,20 +259,20 @@ def main():
     try:
         print("Loading training dataset...")
         train_dataset = PNGImageDataset(
-            image_dir='./data/train',
+            image_dir=f'{data_root_folder}train',
             transform=transform
         )
         
         print("Loading validation dataset...")
         val_dataset = PNGImageDataset(
-            image_dir='./data/val',
+            image_dir=f'{data_root_folder}val',
             transform=transform,
             label_map=train_dataset.label_map
         )
         
         print("Loading testing dataset...")
         test_dataset = PNGImageDataset(
-            image_dir='./data/test',
+            image_dir=f'{data_root_folder}test',
             transform=transform,
             label_map=train_dataset.label_map
         )
@@ -370,4 +370,5 @@ def predict_image(model, image_path, transform, label_map, device='cuda'):
         return None, None
 
 if __name__ == "__main__":
-    main()
+    data_root_folder = './data/'
+    main(data_root_folder)
