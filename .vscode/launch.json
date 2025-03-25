@@ -16,12 +16,24 @@
             "name": "pytorch_image_classifier_png_data",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/cdni/pytorch_image_classifier_png_data.py",
+            "program": "src/cdni/deep_learning/pytorch_image_classifier_png_data.py",
             "console": "integratedTerminal",
             "args": [
-                "./data/"
+                "./data_pixar/"
+            ]
+        },
+        {
+            "name": "download_character_emotion_images",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/cdni/file_manipulation/download_character_emotion_images.py",
+            "console": "integratedTerminal",
+            "args": [
+                "data/pixar/characters.csv",
+                "data/pixar/emotions.csv",
+                "pixar",
+                "./data/pixar/"
             ]
         }
-
     ]
 }

@@ -2,7 +2,7 @@ import sys
 import torch
 from torchvision import transforms
 
-from cdni.pytorch_image_classifier_png_data import ImageClassifier, predict_image
+from cdni.deep_learning.pytorch_image_classifier_png_data import ImageClassifier, predict_image
 
 
 if __name__ == "__main__":

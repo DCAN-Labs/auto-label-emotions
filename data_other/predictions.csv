@@ -1,6 +1,0 @@
-file,prediction,prediction_matrix
-data_other/AirMater/AirMater_000.jpg,joy,[1.8663838e-11, 3.8586229e-02, 2.5550018e-12, 9.6141374e-01,1.5925183e-08, 8.6880505e-44, 6.4274758e-41]
-data_other/Bao/BaoOld_000.jpg,neutral,[5.2540987e-17, 2.2945604e-11, 2.7348043e-21, 3.4969693e-07,9.8190993e-01, 1.8089632e-02, 3.6073519e-11]
-data_other/Bao/BaoYoung_001.jpg,neutral,[1.8347588e-33, 9.2260988e-04, 0.0000000e+00, 1.9239137e-23,9.9907732e-01, 1.0381925e-19, 1.7769575e-28]
-data_other/HawaiianVacation/HawaiianVacationToy_000.jpg,surprise,[9.6224889e-11, 2.3473279e-10, 4.3234087e-23, 3.9317022e-25,5.4193502e-03, 1.0712926e-20, 9.9458057e-01]
-data_other/HawaiianVacation/HawaiianVacationMan_000.jpg,neutral,[9.9052183e-41, 2.3159863e-16, 0.0000000e+00, 5.0107187e-16,1.0000000e+00, 3.6855581e-27, 0.0000000e+00]
