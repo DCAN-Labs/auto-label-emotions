@@ -1,0 +1,7 @@
+Pixar Database
+==============
+I've created a Pixar database of images that is downloaded from the web, [download_character_emotion_images.py](../src/cdni/file_manipulation/download_character_emotion_images.py).  Unfortunately, this database has a lot of problems.  A lot of the emotions are mislabeled.  Sometimes the same image is downloaded for two different emotions.  (This might not actually be a problem since a face can display more than one emotion.)
+
+The test accuracy is 0.1250, which is no better than guessing, since there are eight emotions used.
+
+![training history](pixar_training_history.png "Pixar Training History")
