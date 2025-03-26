@@ -11,6 +11,8 @@ import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import shutil
+
 
 # Define the CNN architecture
 class ImageClassifier(nn.Module):
@@ -238,7 +240,7 @@ def evaluate_model(model, test_loader, device='cuda'):
     return accuracy, cm
 
 # Example usage
-def main(data_root_folder):
+def main(data_root_folder, model_save_file_path):
     # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
@@ -310,7 +312,8 @@ def main(data_root_folder):
     )
     
     # Load best model
-    model.load_state_dict(torch.load('best_model.pth'))
+    best_model_file = 'best_model.pth'
+    model.load_state_dict(torch.load(best_model_file))
     
     # Evaluate model
     accuracy, cm = evaluate_model(model, test_loader, device)
@@ -339,7 +342,8 @@ def main(data_root_folder):
     
     plt.tight_layout()
     plt.savefig('training_history.png')
-    plt.show()
+
+    shutil.copy(best_model_file, model_save_file_path)
 
 # Example of how to predict a single image
 def predict_image(model, image_path, transform, label_map, device='cuda'):
@@ -372,4 +376,5 @@ def predict_image(model, image_path, transform, label_map, device='cuda'):
 
 if __name__ == "__main__":
     data_root_folder = sys.argv[1]
-    main(data_root_folder)
+    model_save_file_path = sys.argv[2]
+    main(data_root_folder, model_save_file_path)

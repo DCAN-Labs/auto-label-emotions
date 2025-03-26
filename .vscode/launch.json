@@ -19,7 +19,7 @@
             "program": "src/cdni/deep_learning/pytorch_image_classifier_png_data.py",
             "console": "integratedTerminal",
             "args": [
-                "data/tvt/pixar"
+                "data/tvt/FERG",  "/home/feczk001/shared/data/auto_label_emotions/models/ferg00.pth"
             ]
         },
         {
