@@ -34,6 +34,27 @@
                 "pixar",
                 "./data/pixar/"
             ]
+        },
+        {
+            "name": "create_data_folder",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/cdni/file_manipulation/create_data_folder.py",
+            "console": "integratedTerminal",
+            "args": [
+                "data/raw/pixar",
+                "data/tvt/pixar"
+            ]
+        },
+        {
+            "name": "remove_bg_resize",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/cdni/image_manipulation/remove_bg_resize.py",
+            "console": "integratedTerminal",
+            "args": [
+                "data/tvt/pixar"
+            ]
         }
     ]
 }

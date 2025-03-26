@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -370,5 +371,5 @@ def predict_image(model, image_path, transform, label_map, device='cuda'):
         return None, None
 
 if __name__ == "__main__":
-    data_root_folder = './data/'
+    data_root_folder = sys.argv[1]
     main(data_root_folder)
