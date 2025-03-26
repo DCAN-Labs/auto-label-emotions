@@ -251,7 +251,7 @@ def main(data_root_folder):
     ])
     
     # Verify data directories exist
-    for data_dir in [f'{data_root_folder}train', f'{data_root_folder}val', f'{data_root_folder}test']:
+    for data_dir in [f'{data_root_folder}/train', f'{data_root_folder}/val', f'{data_root_folder}/test']:
         if not os.path.exists(data_dir):
             os.makedirs(data_dir, exist_ok=True)
             print(f"Created directory: {data_dir}")
@@ -260,20 +260,20 @@ def main(data_root_folder):
     try:
         print("Loading training dataset...")
         train_dataset = PNGImageDataset(
-            image_dir=f'{data_root_folder}train',
+            image_dir=f'{data_root_folder}/train',
             transform=transform
         )
         
         print("Loading validation dataset...")
         val_dataset = PNGImageDataset(
-            image_dir=f'{data_root_folder}val',
+            image_dir=f'{data_root_folder}/val',
             transform=transform,
             label_map=train_dataset.label_map
         )
         
         print("Loading testing dataset...")
         test_dataset = PNGImageDataset(
-            image_dir=f'{data_root_folder}test',
+            image_dir=f'{data_root_folder}/test',
             transform=transform,
             label_map=train_dataset.label_map
         )

@@ -19,7 +19,7 @@
             "program": "src/cdni/deep_learning/pytorch_image_classifier_png_data.py",
             "console": "integratedTerminal",
             "args": [
-                "./data_pixar/"
+                "data/tvt/pixar"
             ]
         },
         {
