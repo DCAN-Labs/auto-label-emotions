@@ -19,7 +19,7 @@
             "program": "src/cdni/deep_learning/pytorch_image_classifier_png_data.py",
             "console": "integratedTerminal",
             "args": [
-                "data/tvt/FERG",  "/home/feczk001/shared/data/auto_label_emotions/models/ferg00.pth"
+                "data/tvt/pixar",  "/home/feczk001/shared/data/auto_label_emotions/models/pixar00.pth"
             ]
         },
         {
@@ -36,10 +36,10 @@
             ]
         },
         {
-            "name": "create_data_folder",
+            "name": "create_tvt_data_folders",
             "type": "debugpy",
             "request": "launch",
-            "program": "src/cdni/file_manipulation/create_data_folder.py",
+            "program": "src/cdni/file_manipulation/create_tvt_data_folders.py",
             "console": "integratedTerminal",
             "args": [
                 "data/raw/pixar",
@@ -54,6 +54,15 @@
             "console": "integratedTerminal",
             "args": [
                 "data/tvt/pixar"
+            ]
+        },
+        {
+            "name": "create_png_dataset",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "src/cdni/file_manipulation/create_png_dataset.py",
+            "console": "integratedTerminal",
+            "args": [
             ]
         }
     ]

@@ -5,13 +5,11 @@ Late last week, I experimented with the Facial Expression Research Group 2D Data
     Test Accuracy: 1.0000
 
     Confusion Matrix:
-    [[917   0   0   0   0   0   0]
-    [  0 857   0   0   0   0   0]
-    [  0   0 742   0   0   0   0]
-    [  0   0   0 733   0   0   0]
-    [  0   0   0   0 694   0   0]
-    [  0   0   0   0   0 762   0]
-    [  0   0   0   0   0   0 872]]
+    [[917   0   0   0   0]
+     [  0 857   0   0   0]
+     [  0   0 742   0   0]
+     [  0   0   0 733   0]
+     [  0   0   0   0 762]]
 
 ![training history](ferg_training_history.png "FERG Training History")
 

@@ -55,7 +55,7 @@ START_TIME=$(date +%s)
 echo "======= STARTING MODEL TRAINING ======="
 # Run the script with time command to track execution time
 time /users/9/reine097/projects/auto-label-emotions/.venv/bin/python \
-  /users/9/reine097/projects/auto-label-emotions/src/cdni/deep_learning/pytorch_image_classifier_png_data.py "data/tvt/pixar"
+  /users/9/reine097/projects/auto-label-emotions/src/cdni/deep_learning/pytorch_image_classifier_png_data.py "data/tvt/pixar" "/home/feczk001/shared/data/auto_label_emotions/models/pixar01.pth"
 
 # Calculate duration
 END_TIME=$(date +%s)
