@@ -1,15 +1,11 @@
-import os
-from os import listdir
-from os.path import isfile, join
-from matplotlib import transforms
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
+from torchvision import transforms
 
-from cdni.deep_learning.predict_image import predict
 from cdni.deep_learning.pytorch_image_classifier_png_data import ImageClassifier, PNGImageDataset, evaluate_model
+from cdni.deep_learning.emotions import emotions
 
-if __name__ == 'main':
-    base_dir = 'data/tvt/pixar'
-    divisions = ['train', 'val', 'test']
+if __name__ == '__main__':
+    base_dir = 'data/png_dataset/pixar'
     model_path = '/home/feczk001/shared/data/auto_label_emotions/models/ferg00.pth'
     num_classes = len(emotions)
     # For RGBA images, we need to handle 4 channels
@@ -21,8 +17,9 @@ if __name__ == 'main':
     print("Loading testing dataset...")
     test_dataset = PNGImageDataset(
         image_dir=f'{base_dir}',
-        transform=transform,
-        label_map=train_dataset.label_map
+        transform=transform
     )
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=4)
-    evaluate_model(model, test_loader, device='cuda')
+    accuracy, cm = evaluate_model(model, test_loader, device='cpu')
+    print(f'accuracy: {accuracy}')
+    print(f'cm: {cm}')

@@ -64,6 +64,15 @@
             "console": "integratedTerminal",
             "args": [
             ]
+        },
+        {
+            "name": "predict_images",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/cdni/deep_learning/predict_images.py",
+            "console": "integratedTerminal",
+            "args": [
+            ]
         }
     ]
 }
