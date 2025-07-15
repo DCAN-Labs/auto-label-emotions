@@ -5,6 +5,14 @@ from pathlib import Path
 import argparse
 from tqdm import tqdm
 
+def generate_filename_from_timestamp(current_time_ms, image_format, output_dir):
+    # Generate filename with timestamp
+    timestamp_str = f"{current_time_ms:08.0f}ms"
+    filename = f"frame_{timestamp_str}.{image_format.lower()}"
+    filepath = os.path.join(output_dir, filename)
+
+    return filepath
+    
 class FrameExtractor:
     def __init__(self, video_path, output_dir="extracted_frames", interval_ms=100):
         """
@@ -35,7 +43,7 @@ class FrameExtractor:
         print(f"  Total frames: {self.total_frames}")
         print(f"  Duration: {self.duration_ms:.2f} ms ({self.duration_ms/1000:.2f} seconds)")
         print(f"  Extraction interval: {self.interval_ms} ms")
-    
+
     def extract_frames(self, image_format="jpg", image_quality=95):
         """
         Extract frames from the video at specified intervals
@@ -80,9 +88,7 @@ class FrameExtractor:
                 break
             
             # Generate filename with timestamp
-            timestamp_str = f"{current_time_ms:08.0f}ms"
-            filename = f"frame_{timestamp_str}.{image_format.lower()}"
-            filepath = os.path.join(self.output_dir, filename)
+            filepath = generate_filename_from_timestamp(current_time_ms, image_format, self.output_dir)
             
             # Save frame
             success = cv2.imwrite(filepath, frame, encode_params)
