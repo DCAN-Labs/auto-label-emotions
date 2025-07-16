@@ -15,6 +15,7 @@ import seaborn as sns
 from tqdm import tqdm
 from pathlib import Path
 import json
+import time
 from PIL import Image
 from typing import Dict, Any, Optional, List, Tuple
 
@@ -214,7 +215,7 @@ class BinaryClassifier:
         self.model_type = model_type
         self.backbone = backbone
         self.img_size = img_size
-        # TODO Detect device
+        # TODO Detect device at run-time
         self.device = 'cpu' # device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = None
         self.train_history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
@@ -311,7 +312,10 @@ class BinaryClassifier:
         )
         
         best_val_loss = float('inf')
+        best_val_acc = 0.0
         epochs_without_improvement = 0
+        total_epochs_trained = 0
+        training_start_time = time.time()
         
         print(f"Starting training for {self.task_name}...")
         print(f"Target classes: {self.class_names}")
@@ -395,6 +399,7 @@ class BinaryClassifier:
             # Early stopping and model saving
             if val_loss_avg < best_val_loss:
                 best_val_loss = val_loss_avg
+                best_val_acc = val_acc
                 epochs_without_improvement = 0
                 torch.save({
                     'epoch': epoch,
@@ -413,11 +418,118 @@ class BinaryClassifier:
                 epochs_without_improvement += 1
                 if epochs_without_improvement >= patience:
                     print(f'Early stopping triggered after {epoch+1} epochs')
+                    total_epochs_trained = epoch + 1
                     break
             
+            total_epochs_trained = epoch + 1
             print('-' * 50)
         
+        # Calculate training time
+        training_time = time.time() - training_start_time
+        
+        # Print comprehensive training summary
+        self._print_training_summary(
+            total_epochs_trained, training_time, best_val_loss, best_val_acc, 
+            len(train_loader.dataset), len(val_loader.dataset), save_path
+        )
+        
         return self.train_history
+    
+    def _print_training_summary(self, total_epochs, training_time, best_val_loss, 
+                               best_val_acc, train_samples, val_samples, model_path):
+        """Print a comprehensive training summary"""
+        hours = int(training_time // 3600)
+        minutes = int((training_time % 3600) // 60)
+        seconds = int(training_time % 60)
+        
+        print("\n" + "="*80)
+        print(f"\U0001f3af TRAINING COMPLETE - {self.task_name.upper()}")
+        print("="*80)
+        
+        # Model Configuration
+        print("\U0001f4cb MODEL CONFIGURATION:")
+        print(f"   Task: {self.task_name}")
+        print(f"   Model Type: {self.model_type}")
+        if self.model_type == 'transfer':
+            print(f"   Backbone: {self.backbone}")
+        print(f"   Image Size: {self.img_size}x{self.img_size}")
+        print(f"   Device: {self.device}")
+        print(f"   Classes: {self.class_names}")
+        
+        # Training Statistics
+        print(f"\n\U0001f4ca TRAINING STATISTICS:")
+        print(f"   Total Epochs: {total_epochs}")
+        print(f"   Training Time: {hours:02d}:{minutes:02d}:{seconds:02d}")
+        print(f"   Training Samples: {train_samples:,}")
+        print(f"   Validation Samples: {val_samples:,}")
+        print(f"   Total Samples: {train_samples + val_samples:,}")
+        
+        # Performance Metrics
+        print(f"\n\U0001f3c6 BEST PERFORMANCE:")
+        print(f"   Best Validation Loss: {best_val_loss:.4f}")
+        print(f"   Best Validation Accuracy: {best_val_acc:.2f}%")
+        
+        # Performance Assessment
+        if best_val_acc >= 95:
+            performance = "\U0001f31f EXCELLENT"
+            emoji = "\U0001f389"
+        elif best_val_acc >= 90:
+            performance = "\u2705 VERY GOOD"
+            emoji = "\U0001f44d"
+        elif best_val_acc >= 80:
+            performance = "\U0001f44c GOOD"
+            emoji = "\U0001f44c"
+        elif best_val_acc >= 70:
+            performance = "\u26a0\ufe0f  FAIR"
+            emoji = "\U0001f914"
+        else:
+            performance = "\u274c NEEDS IMPROVEMENT"
+            emoji = "\U0001f615"
+        
+        print(f"\n{emoji} PERFORMANCE ASSESSMENT: {performance}")
+        
+        # Recommendations
+        print(f"\n\U0001f4a1 RECOMMENDATIONS:")
+        if best_val_acc >= 90:
+            print("   \u2022 Excellent performance! Model is ready for deployment.")
+            print("   \u2022 Consider testing on additional validation data.")
+        elif best_val_acc >= 80:
+            print("   \u2022 Good performance. Consider fine-tuning hyperparameters.")
+            print("   \u2022 Try unfreezing more layers if using transfer learning.")
+        elif best_val_acc >= 70:
+            print("   \u2022 Fair performance. Consider:")
+            print("     - Collecting more training data")
+            print("     - Adjusting learning rate or batch size")
+            print("     - Using data augmentation")
+        else:
+            print("   \u2022 Performance needs improvement. Consider:")
+            print("     - Checking data quality and labels")
+            print("     - Using a different model architecture")
+            print("     - Collecting more diverse training data")
+            print("     - Adjusting hyperparameters")
+        
+        # Model Information
+        print(f"\n\U0001f4be MODEL SAVED:")
+        print(f"   Location: {model_path}")
+        print(f"   Ready for: Inference, evaluation, and deployment")
+        
+        # Final Statistics
+        final_train_acc = self.train_history['train_acc'][-1] if self.train_history['train_acc'] else 0
+        final_val_acc = self.train_history['val_acc'][-1] if self.train_history['val_acc'] else 0
+        
+        print(f"\n\U0001f4c8 FINAL EPOCH PERFORMANCE:")
+        print(f"   Final Training Accuracy: {final_train_acc:.2f}%")
+        print(f"   Final Validation Accuracy: {final_val_acc:.2f}%")
+        
+        # Overfitting Check
+        if abs(final_train_acc - final_val_acc) > 10:
+            print(f"   \u26a0\ufe0f  Warning: Large gap between train/val accuracy suggests overfitting")
+        elif abs(final_train_acc - final_val_acc) < 5:
+            print(f"   \u2705 Good: Small gap between train/val accuracy indicates good generalization")
+        
+        print("="*80)
+        print("\U0001f680 Ready for evaluation and deployment!")
+        print("="*80)
     
     def evaluate_model(self, test_loader):
         """Evaluate the model on test dataset"""
@@ -673,7 +785,7 @@ class EmotionClassifier(BinaryClassifier):
         """Check if image shows positive emotion"""
         result = self.predict_image(image_path, threshold)
         return result['is_positive']
-
+    
 def main():
     """Example usage for different tasks"""
     
