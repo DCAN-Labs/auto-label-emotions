@@ -16,12 +16,13 @@ from tqdm import tqdm
 from pathlib import Path
 import json
 from PIL import Image
+from typing import Dict, Any, Optional, List, Tuple
 
-class CartoonFaceCNN(nn.Module):
-    """Custom CNN model for cartoon face detection"""
+class CustomCNN(nn.Module):
+    """Custom CNN model for binary classification"""
     
     def __init__(self, num_classes=1, dropout_rate=0.5):
-        super(CartoonFaceCNN, self).__init__()
+        super(CustomCNN, self).__init__()
         
         # First convolutional block
         self.conv1 = nn.Sequential(
@@ -97,34 +98,73 @@ class CartoonFaceCNN(nn.Module):
         x = self.classifier(x)
         return x
 
-class CartoonFaceMobileNet(nn.Module):
-    """Transfer learning model using MobileNetV2"""
+class TransferLearningModel(nn.Module):
+    """Transfer learning model using pretrained backbone"""
     
-    def __init__(self, num_classes=1, pretrained=True, freeze_features=True):
-        super(CartoonFaceMobileNet, self).__init__()
+    def __init__(self, backbone='mobilenet', num_classes=1, pretrained=True, freeze_features=True):
+        super(TransferLearningModel, self).__init__()
         
-        # Load pretrained MobileNetV2
-        self.backbone = models.mobilenet_v2(pretrained=pretrained)
+        # Load pretrained backbone
+        if backbone == 'mobilenet':
+            self.backbone = models.mobilenet_v2(pretrained=pretrained)
+            in_features = self.backbone.classifier[1].in_features
+        elif backbone == 'resnet18':
+            self.backbone = models.resnet18(pretrained=pretrained)
+            in_features = self.backbone.fc.in_features
+        elif backbone == 'resnet50':
+            self.backbone = models.resnet50(pretrained=pretrained)
+            in_features = self.backbone.fc.in_features
+        elif backbone == 'efficientnet_b0':
+            self.backbone = models.efficientnet_b0(pretrained=pretrained)
+            in_features = self.backbone.classifier[1].in_features
+        else:
+            raise ValueError(f"Unsupported backbone: {backbone}")
         
         # Freeze feature extraction layers if specified
         if freeze_features:
-            for param in self.backbone.features.parameters():
+            for param in self.backbone.parameters():
                 param.requires_grad = False
         
-        # Replace classifier
-        in_features = self.backbone.classifier[1].in_features
-        self.backbone.classifier = nn.Sequential(
-            nn.Dropout(0.2),
-            nn.Linear(in_features, 256),
-            nn.BatchNorm1d(256),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(256, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
-            nn.Linear(128, num_classes)
-        )
+        # Replace classifier based on backbone type
+        if backbone == 'mobilenet':
+            self.backbone.classifier = nn.Sequential(
+                nn.Dropout(0.2),
+                nn.Linear(in_features, 256),
+                nn.BatchNorm1d(256),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(256, 128),
+                nn.BatchNorm1d(128),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(128, num_classes)
+            )
+        elif backbone in ['resnet18', 'resnet50']:
+            self.backbone.fc = nn.Sequential(
+                nn.Dropout(0.2),
+                nn.Linear(in_features, 256),
+                nn.BatchNorm1d(256),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(256, 128),
+                nn.BatchNorm1d(128),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(128, num_classes)
+            )
+        elif backbone == 'efficientnet_b0':
+            self.backbone.classifier = nn.Sequential(
+                nn.Dropout(0.2),
+                nn.Linear(in_features, 256),
+                nn.BatchNorm1d(256),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(256, 128),
+                nn.BatchNorm1d(128),
+                nn.ReLU(inplace=True),
+                nn.Dropout(0.5),
+                nn.Linear(128, num_classes)
+            )
         
     def forward(self, x):
         return self.backbone(x)
@@ -150,23 +190,38 @@ class VideoFrameDataset(Dataset):
             
         return image, torch.tensor(label, dtype=torch.float32)
 
-class CartoonFaceDetector:
-    def __init__(self, model_type='cnn', img_size=224, device=None):
+class BinaryClassifier:
+    def __init__(self, 
+                 task_name: str = "binary_classification",
+                 class_names: Optional[Dict[int, str]] = None,
+                 model_type: str = 'cnn', 
+                 backbone: str = 'mobilenet',
+                 img_size: int = 224, 
+                 device: Optional[str] = None):
         """
-        Initialize the cartoon face detector
+        Initialize the binary classifier
         
         Args:
-            model_type (str): 'cnn' for custom CNN or 'mobilenet' for transfer learning
-            img_size (int): Input image size
-            device (str): Device to use ('cuda', 'cpu', or None for auto)
+            task_name: Name of the classification task (e.g., 'face_detection', 'emotion_classification')
+            class_names: Dictionary mapping class indices to names {0: 'negative', 1: 'positive'}
+            model_type: 'cnn' for custom CNN or 'transfer' for transfer learning
+            backbone: Backbone model for transfer learning ('mobilenet', 'resnet18', 'resnet50', 'efficientnet_b0')
+            img_size: Input image size
+            device: Device to use ('cuda', 'cpu', or None for auto)
         """
+        self.task_name = task_name
+        self.class_names = class_names or {0: 'negative', 1: 'positive'}
         self.model_type = model_type
+        self.backbone = backbone
         self.img_size = img_size
+        # TODO Detect device
         self.device = 'cpu' # device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = None
         self.train_history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
         
+        print(f"Initializing {self.task_name} classifier")
         print(f"Using device: {self.device}")
+        print(f"Class mapping: {self.class_names}")
         
         # Define transforms
         self.train_transform = transforms.Compose([
@@ -187,20 +242,24 @@ class CartoonFaceDetector:
     def create_model(self, **kwargs):
         """Create the model based on model_type"""
         if self.model_type == 'cnn':
-            self.model = CartoonFaceCNN(**kwargs)
-        elif self.model_type == 'mobilenet':
-            self.model = CartoonFaceMobileNet(**kwargs)
+            self.model = CustomCNN(**kwargs)
+        elif self.model_type == 'transfer':
+            self.model = TransferLearningModel(backbone=self.backbone, **kwargs)
         else:
             raise ValueError(f"Unknown model type: {self.model_type}")
         
         self.model = self.model.to(self.device)
         return self.model
     
-    def load_dataset(self, data_dir, batch_size=32, val_split=0.2):
+    def load_dataset(self, data_dir: str, batch_size: int = 32, val_split: float = 0.2):
         """Load dataset from directory structure"""
         # Create separate datasets for train and validation with different transforms
         train_dataset_full = ImageFolder(root=data_dir, transform=self.train_transform)
         val_dataset_full = ImageFolder(root=data_dir, transform=self.val_transform)
+        
+        # Update class names from dataset
+        dataset_class_names = {i: name for i, name in enumerate(train_dataset_full.classes)}
+        print(f"Dataset classes detected: {dataset_class_names}")
         
         # Get indices for splitting
         dataset_size = len(train_dataset_full)
@@ -217,7 +276,6 @@ class CartoonFaceDetector:
         val_indices = indices[train_size:]
         
         # Create subset datasets
-        from torch.utils.data import Subset
         train_dataset = Subset(train_dataset_full, train_indices)
         val_dataset = Subset(val_dataset_full, val_indices)
         
@@ -232,15 +290,15 @@ class CartoonFaceDetector:
             num_workers=4, pin_memory=True if self.device == 'cuda' else False
         )
         
-        self.class_names = train_dataset_full.classes
-        print(f"Classes: {self.class_names}")
+        self.dataset_class_names = train_dataset_full.classes
+        print(f"Dataset structure: {self.dataset_class_names}")
         print(f"Training samples: {len(train_dataset)}")
         print(f"Validation samples: {len(val_dataset)}")
         
         return train_loader, val_loader
     
-    def train_model(self, train_loader, val_loader, epochs=50, lr=0.001, 
-                   weight_decay=1e-4, patience=10, save_path='best_model.pth'):
+    def train_model(self, train_loader, val_loader, epochs: int = 50, lr: float = 0.001, 
+                   weight_decay: float = 1e-4, patience: int = 10, save_path: str = 'best_model.pth'):
         """Train the model"""
         if self.model is None:
             raise ValueError("Model not created yet. Call create_model() first.")
@@ -254,6 +312,9 @@ class CartoonFaceDetector:
         
         best_val_loss = float('inf')
         epochs_without_improvement = 0
+        
+        print(f"Starting training for {self.task_name}...")
+        print(f"Target classes: {self.class_names}")
         
         for epoch in range(epochs):
             # Training phase
@@ -342,7 +403,10 @@ class CartoonFaceDetector:
                     'val_loss': val_loss_avg,
                     'val_acc': val_acc,
                     'model_type': self.model_type,
-                    'img_size': self.img_size
+                    'backbone': self.backbone,
+                    'img_size': self.img_size,
+                    'task_name': self.task_name,
+                    'class_names': self.class_names
                 }, save_path)
                 print(f'  New best model saved to {save_path}')
             else:
@@ -387,16 +451,16 @@ class CartoonFaceDetector:
         accuracy = 100. * correct / total
         avg_loss = test_loss / len(test_loader)
         
-        print(f'Test Results:')
+        print(f'{self.task_name} Test Results:')
         print(f'  Average Loss: {avg_loss:.4f}')
         print(f'  Accuracy: {accuracy:.2f}%')
         
         # Calculate additional metrics
         from sklearn.metrics import precision_score, recall_score, f1_score
         
-        precision = precision_score(all_targets, all_predictions)
-        recall = recall_score(all_targets, all_predictions)
-        f1 = f1_score(all_targets, all_predictions)
+        precision = precision_score(all_targets, all_predictions, zero_division=0)
+        recall = recall_score(all_targets, all_predictions, zero_division=0)
+        f1 = f1_score(all_targets, all_predictions, zero_division=0)
         
         print(f'  Precision: {precision:.4f}')
         print(f'  Recall: {recall:.4f}')
@@ -412,8 +476,8 @@ class CartoonFaceDetector:
             'targets': all_targets
         }
     
-    def predict_image(self, image_path, threshold=0.5):
-        """Predict if an image contains a face"""
+    def predict_image(self, image_path: str, threshold: float = 0.5) -> Dict[str, Any]:
+        """Predict class for an image"""
         if self.model is None:
             raise ValueError("Model not loaded yet.")
         
@@ -425,15 +489,17 @@ class CartoonFaceDetector:
         with torch.no_grad():
             output = self.model(image_tensor)
             probability = torch.sigmoid(output).item()
-            has_face = probability > threshold
+            predicted_class = int(probability > threshold)
         
         return {
-            'has_face': bool(has_face),
-            'confidence': float(probability)
+            'predicted_class': predicted_class,
+            'class_name': self.class_names[predicted_class],
+            'confidence': float(probability),
+            'is_positive': bool(predicted_class == 1)
         }
     
-    def predict_frame(self, frame, threshold=0.5):
-        """Predict if a video frame contains a face"""
+    def predict_frame(self, frame, threshold: float = 0.5) -> Dict[str, Any]:
+        """Predict class for a video frame"""
         if self.model is None:
             raise ValueError("Model not loaded yet.")
         
@@ -446,15 +512,18 @@ class CartoonFaceDetector:
         with torch.no_grad():
             output = self.model(image_tensor)
             probability = torch.sigmoid(output).item()
-            has_face = probability > threshold
+            predicted_class = int(probability > threshold)
         
         return {
-            'has_face': bool(has_face),
-            'confidence': float(probability)
+            'predicted_class': predicted_class,
+            'class_name': self.class_names[predicted_class],
+            'confidence': float(probability),
+            'is_positive': bool(predicted_class == 1)
         }
     
-    def process_video(self, video_path, output_path=None, threshold=0.5):
-        """Process a video file and detect faces in each frame"""
+    def process_video(self, video_path: str, output_path: Optional[str] = None, 
+                     threshold: float = 0.5) -> List[Dict[str, Any]]:
+        """Process a video file and classify each frame"""
         cap = cv2.VideoCapture(video_path)
         
         # Get video properties
@@ -470,21 +539,21 @@ class CartoonFaceDetector:
         
         frame_results = []
         
-        with tqdm(total=total_frames, desc='Processing video') as pbar:
+        with tqdm(total=total_frames, desc=f'Processing video for {self.task_name}') as pbar:
             frame_count = 0
             while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
                 
-                # Predict face in current frame
+                # Predict class for current frame
                 result = self.predict_frame(frame, threshold)
                 result['frame_number'] = frame_count
                 frame_results.append(result)
                 
                 # Add text overlay to frame
-                text = f"Face: {'YES' if result['has_face'] else 'NO'} ({result['confidence']:.2f})"
-                color = (0, 255, 0) if result['has_face'] else (0, 0, 255)
+                text = f"{result['class_name']}: {result['confidence']:.2f}"
+                color = (0, 255, 0) if result['is_positive'] else (0, 0, 255)
                 cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
                 
                 # Write frame to output video
@@ -513,7 +582,7 @@ class CartoonFaceDetector:
         # Plot loss
         ax1.plot(epochs, self.train_history['train_loss'], 'b-', label='Training Loss')
         ax1.plot(epochs, self.train_history['val_loss'], 'r-', label='Validation Loss')
-        ax1.set_title('Model Loss')
+        ax1.set_title(f'{self.task_name} - Model Loss')
         ax1.set_xlabel('Epoch')
         ax1.set_ylabel('Loss')
         ax1.legend()
@@ -522,7 +591,7 @@ class CartoonFaceDetector:
         # Plot accuracy
         ax2.plot(epochs, self.train_history['train_acc'], 'b-', label='Training Accuracy')
         ax2.plot(epochs, self.train_history['val_acc'], 'r-', label='Validation Accuracy')
-        ax2.set_title('Model Accuracy')
+        ax2.set_title(f'{self.task_name} - Model Accuracy')
         ax2.set_xlabel('Epoch')
         ax2.set_ylabel('Accuracy (%)')
         ax2.legend()
@@ -531,7 +600,7 @@ class CartoonFaceDetector:
         plt.tight_layout()
         plt.show()
     
-    def save_model(self, filepath):
+    def save_model(self, filepath: str):
         """Save the trained model"""
         if self.model is None:
             raise ValueError("No model to save.")
@@ -539,18 +608,24 @@ class CartoonFaceDetector:
         torch.save({
             'model_state_dict': self.model.state_dict(),
             'model_type': self.model_type,
+            'backbone': self.backbone,
             'img_size': self.img_size,
+            'task_name': self.task_name,
+            'class_names': self.class_names,
             'train_history': self.train_history
         }, filepath)
         print(f"Model saved to {filepath}")
     
-    def load_model(self, filepath, **model_kwargs):
+    def load_model(self, filepath: str, **model_kwargs):
         """Load a saved model"""
         checkpoint = torch.load(filepath, map_location=self.device)
         
         # Create model with saved configuration
         self.model_type = checkpoint.get('model_type', self.model_type)
+        self.backbone = checkpoint.get('backbone', self.backbone)
         self.img_size = checkpoint.get('img_size', self.img_size)
+        self.task_name = checkpoint.get('task_name', self.task_name)
+        self.class_names = checkpoint.get('class_names', self.class_names)
         
         self.create_model(**model_kwargs)
         self.model.load_state_dict(checkpoint['model_state_dict'])
@@ -559,43 +634,65 @@ class CartoonFaceDetector:
             self.train_history = checkpoint['train_history']
         
         print(f"Model loaded from {filepath}")
+        print(f"Task: {self.task_name}")
+        print(f"Classes: {self.class_names}")
         return self.model
 
-def main():
-    """Example usage"""
-    # Initialize detector
-    detector = CartoonFaceDetector(model_type='mobilenet', img_size=224)
+# Convenience classes for specific tasks
+class FaceDetector(BinaryClassifier):
+    """Face detection classifier"""
+    def __init__(self, model_type='transfer', backbone='mobilenet', img_size=224, device=None):
+        super().__init__(
+            task_name="face_detection",
+            class_names={0: 'no_face', 1: 'face'},
+            model_type=model_type,
+            backbone=backbone,
+            img_size=img_size,
+            device=device
+        )
     
-    # Create model
-    model = detector.create_model(pretrained=True, freeze_features=True)
-    print(f"Model created with {sum(p.numel() for p in model.parameters() if p.requires_grad)} trainable parameters")
-    
-    # Load dataset (uncomment when you have data)
-    train_loader, val_loader = detector.load_dataset('data/clip01/out/dataset', batch_size=32)
-    
-    # Train model (uncomment when you have data)
-    history = detector.train_model(train_loader, val_loader, epochs=50, lr=0.001)
-    
-    # Plot training history
-    detector.plot_training_history()
-    
-    # Evaluate model
-    metrics = detector.evaluate_model(val_loader)
-    
-    # Save model
-    detector.save_model('cartoon_face_detector_pytorch.pth')
-    
-    # Load model
-    detector.load_model('cartoon_face_detector_pytorch.pth')
-    
-    # Predict on single image
-    # result = detector.predict_image('path/to/image.jpg')
-    # print(f"Has face: {result['has_face']}, Confidence: {result['confidence']:.2f}")
-    
-    # Process video
-    # frame_results = detector.process_video('input_video.mp4', 'output_video.mp4')
-    
-    print("PyTorch cartoon face detection model created successfully!")
+    def has_face(self, image_path: str, threshold: float = 0.5) -> bool:
+        """Check if image contains a face"""
+        result = self.predict_image(image_path, threshold)
+        return result['is_positive']
 
-if __name__ == "__main__":
+class EmotionClassifier(BinaryClassifier):
+    """Emotion classification (happy/sad, positive/negative, etc.)"""
+    def __init__(self, positive_emotion='happy', negative_emotion='sad', 
+                 model_type='transfer', backbone='mobilenet', img_size=224, device=None):
+        super().__init__(
+            task_name="emotion_classification",
+            class_names={0: negative_emotion, 1: positive_emotion},
+            model_type=model_type,
+            backbone=backbone,
+            img_size=img_size,
+            device=device
+        )
+    
+    def is_positive_emotion(self, image_path: str, threshold: float = 0.5) -> bool:
+        """Check if image shows positive emotion"""
+        result = self.predict_image(image_path, threshold)
+        return result['is_positive']
+
+def main():
+    """Example usage for different tasks"""
+    
+    # Emotion Classification
+    print("\n=== Emotion Classification Example ===")
+    emotion_classifier = EmotionClassifier(
+        positive_emotion='excited',
+        negative_emotion='not_excited',
+        model_type='transfer',
+        backbone='resnet18'
+    )
+    
+    # Create and train model
+    model = emotion_classifier.create_model(pretrained=True, freeze_features=True)
+    print(f"Emotion detection model created with {sum(p.numel() for p in model.parameters() if p.requires_grad)} trainable parameters")
+    
+    # Load dataset and train
+    train_loader, val_loader = emotion_classifier.load_dataset('data/clip01/out/emotion_dataset', batch_size=32)
+    history = emotion_classifier.train_model(train_loader, val_loader, epochs=50)
+
+if __name__ == '__main__':
     main()
