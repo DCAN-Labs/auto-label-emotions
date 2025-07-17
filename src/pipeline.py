@@ -639,21 +639,21 @@ def run_multi_column_example():
     )
     
     # Option 1: Let pipeline analyze and recommend columns
-    # results = pipeline.run_complete_pipeline(
-    #     class_name_mapping=class_name_mapping,
-    #     model_configs=model_configs,
-    #     training_configs=training_configs,
-    #     verbose=True
-    # )
-    
-    # Option 2: Specify exact columns to process
     results = pipeline.run_complete_pipeline(
-        columns_to_process=['c_excite_face', 'c_happy_face', 'c_fear_face'],
         class_name_mapping=class_name_mapping,
         model_configs=model_configs,
         training_configs=training_configs,
         verbose=True
     )
+    
+    # Option 2: Specify exact columns to process
+    # results = pipeline.run_complete_pipeline(
+    #     columns_to_process=['c_excite_face', 'c_happy_face', 'c_fear_face'],
+    #     class_name_mapping=class_name_mapping,
+    #     model_configs=model_configs,
+    #     training_configs=training_configs,
+    #     verbose=True
+    # )
     
     return results
 

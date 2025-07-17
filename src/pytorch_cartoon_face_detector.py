@@ -105,18 +105,27 @@ class TransferLearningModel(nn.Module):
     def __init__(self, backbone='mobilenet', num_classes=1, pretrained=True, freeze_features=True):
         super(TransferLearningModel, self).__init__()
         
-        # Load pretrained backbone
+        # Handle deprecated 'pretrained' parameter
+        if isinstance(pretrained, bool):
+            if pretrained:
+                weights = 'DEFAULT'  # Use default pretrained weights
+            else:
+                weights = None  # No pretrained weights
+        else:
+            weights = pretrained  # Assume it's already a weights specification
+        
+        # Load backbone with weights parameter
         if backbone == 'mobilenet':
-            self.backbone = models.mobilenet_v2(pretrained=pretrained)
+            self.backbone = models.mobilenet_v2(weights=weights)
             in_features = self.backbone.classifier[1].in_features
         elif backbone == 'resnet18':
-            self.backbone = models.resnet18(pretrained=pretrained)
+            self.backbone = models.resnet18(weights=weights)
             in_features = self.backbone.fc.in_features
         elif backbone == 'resnet50':
-            self.backbone = models.resnet50(pretrained=pretrained)
+            self.backbone = models.resnet50(weights=weights)
             in_features = self.backbone.fc.in_features
         elif backbone == 'efficientnet_b0':
-            self.backbone = models.efficientnet_b0(pretrained=pretrained)
+            self.backbone = models.efficientnet_b0(weights=weights)
             in_features = self.backbone.classifier[1].in_features
         else:
             raise ValueError(f"Unsupported backbone: {backbone}")
@@ -170,6 +179,7 @@ class TransferLearningModel(nn.Module):
     def forward(self, x):
         return self.backbone(x)
 
+
 class VideoFrameDataset(Dataset):
     """Custom dataset for video frames"""
     
@@ -215,8 +225,8 @@ class BinaryClassifier:
         self.model_type = model_type
         self.backbone = backbone
         self.img_size = img_size
-        # TODO Detect device at run-time
-        self.device = 'cpu' # device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
+        # Detect device at run-time
+        self.device = device if device else ('cuda' if torch.cuda.is_available() else 'cpu')
         self.model = None
         self.train_history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
         
