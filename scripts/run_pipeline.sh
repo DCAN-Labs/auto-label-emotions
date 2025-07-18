@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=emo-codes
 #SBATCH --mem=180g        
-#SBATCH --time=1:00:00          
+#SBATCH --time=2:00:00          
 #SBATCH -p a100-4,a100-8
 #SBATCH --gres=gpu:a100:2
 #SBATCH --ntasks=6      
