@@ -795,26 +795,3 @@ class EmotionClassifier(BinaryClassifier):
         """Check if image shows positive emotion"""
         result = self.predict_image(image_path, threshold)
         return result['is_positive']
-    
-def main():
-    """Example usage for different tasks"""
-    
-    # Emotion Classification
-    print("\n=== Emotion Classification Example ===")
-    emotion_classifier = EmotionClassifier(
-        positive_emotion='excited',
-        negative_emotion='not_excited',
-        model_type='transfer',
-        backbone='resnet18'
-    )
-    
-    # Create and train model
-    model = emotion_classifier.create_model(pretrained=True, freeze_features=True)
-    print(f"Emotion detection model created with {sum(p.numel() for p in model.parameters() if p.requires_grad)} trainable parameters")
-    
-    # Load dataset and train
-    train_loader, val_loader = emotion_classifier.load_dataset('data/clip01/out/emotion_dataset', batch_size=32)
-    history = emotion_classifier.train_model(train_loader, val_loader, epochs=50)
-
-if __name__ == '__main__':
-    main()

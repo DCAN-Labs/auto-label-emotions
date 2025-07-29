@@ -75,15 +75,11 @@
             ]
         },
         {
-            "name": "complete_pipeline",
+            "name": "enhanced_multi_column_pipeline",
             "type": "debugpy",
             "request": "launch",
-            "program": "/users/9/reine097/projects/auto-label-emotions/src/complete_pipeline.py",
-            "console": "integratedTerminal",
-            "args": [
-                "--video", "/users/9/reine097/projects/cartoon_emotion_dataset/input/BUGSLIFE.mp4",
-                "--output", "/users/9/reine097/projects/cartoon_emotion_dataset/output/"
-            ]
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_multi_column_pipeline.py",
+            "console": "integratedTerminal"
         }
     ]
 }
