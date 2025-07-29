@@ -78,8 +78,11 @@
             "name": "enhanced_multi_column_pipeline",
             "type": "debugpy",
             "request": "launch",
-            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_multi_column_pipeline.py",
-            "console": "integratedTerminal"
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
         }
     ]
 }
