@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `main.py` file demonstrates how to use the Enhanced Multi-Column Classification Pipeline with both simple and advanced usage patterns. This modular pipeline processes video files and trains multiple binary classifiers for emotion and scene detection.
+The `enhanced_pipeline/main.py` file demonstrates how to use the Enhanced Multi-Column Classification Pipeline with both simple and advanced usage patterns. This modular pipeline processes video files and trains multiple binary classifiers for emotion and scene detection.
 
 ## Quick Start
 
