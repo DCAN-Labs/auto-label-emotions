@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=emo-codes
 #SBATCH --mem=180g        
-#SBATCH --time=2:00:00          
+#SBATCH --time=4:00:00          
 #SBATCH -p a100-4,a100-8
 #SBATCH --gres=gpu:a100:2
 #SBATCH --ntasks=6      
@@ -13,5 +13,5 @@
 cd /users/9/reine097/projects/auto-label-emotions/ || exit
 export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects/auto-label-emotions/src"
 
-/usr/bin/env /users/9/reine097/projects/Cartoon-Emotion-Recognition/.venv/bin/python \
-  /users/9/reine097/projects/auto-label-emotions/src/pipeline.py
+/usr/bin/env /users/9/reine097/projects/auto-label-emotions/.venv/bin/python \
+  /users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py

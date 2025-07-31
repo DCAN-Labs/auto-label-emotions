@@ -24,12 +24,16 @@ def main():
     # 1. Setup configuration
     video_list = [
         "data/clip01/in/clip1_MLP.mp4",
-        "data/clip02/in/clip2_AHKJ.mp4"
+        "data/clip02/in/clip2_AHKJ.mp4",
+        "data/clip03/in/clip3_MLP.mp4",
+        "data/clip04/in/clip4_MLP.mp4"
     ]
     
     clip_mapping = {
         'clip1_MLP': 'data/clip01/in/clip1_codes_MLP.csv',
-        'clip2_AHKJ': 'data/clip02/in/clip2_codes_AHKJ.csv'
+        'clip2_AHKJ': 'data/clip02/in/clip2_codes_AHKJ.csv',
+        'clip3_MLP': 'data/clip03/in/clip3_codes_MLP.csv',
+        'clip4_MLP': 'data/clip04/in/clip4_codes_MLP.csv'
     }
     
     # 2. Create and run pipeline
@@ -37,7 +41,7 @@ def main():
         video_list=video_list,
         clip_csv_mapping=clip_mapping,
         base_output_dir='data/my_results',
-        debug=True  # Change to False for production
+        debug=False  # Change to False for production
     )
     
     # 3. Run complete pipeline
