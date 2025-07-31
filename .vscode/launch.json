@@ -8,77 +8,79 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [
-                "data_other/HawaiianVacation/HawaiianVacationMan_000.jpg"
-            ]
-        },
-        {
-            "name": "pytorch_image_classifier_png_data",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/cdni/deep_learning/pytorch_image_classifier_png_data.py",
-            "console": "integratedTerminal",
-            "args": [
-                "data/tvt/pixar",  "/home/feczk001/shared/data/auto_label_emotions/models/pixar00.pth"
-            ]
-        },
-        {
-            "name": "download_character_emotion_images",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/cdni/file_manipulation/download_character_emotion_images.py",
-            "console": "integratedTerminal",
-            "args": [
-                "data/pixar/characters.csv",
-                "data/pixar/emotions.csv",
-                "pixar",
-                "./data/pixar/"
-            ]
-        },
-        {
-            "name": "create_tvt_data_folders",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/cdni/file_manipulation/create_tvt_data_folders.py",
-            "console": "integratedTerminal",
-            "args": [
-                "data/raw/pixar",
-                "data/tvt/pixar"
-            ]
-        },
-        {
-            "name": "remove_bg_resize",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/cdni/image_manipulation/remove_bg_resize.py",
-            "console": "integratedTerminal",
-            "args": [
-                "data/tvt/pixar"
-            ]
-        },
-        {
-            "name": "create_png_dataset",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "src/cdni/file_manipulation/create_png_dataset.py",
-            "console": "integratedTerminal",
-            "args": [
-            ]
-        },
-        {
-            "name": "predict_images",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "/users/9/reine097/projects/auto-label-emotions/src/cdni/deep_learning/predict_images.py",
-            "console": "integratedTerminal",
-            "args": [
-            ]
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
         },
         {
             "name": "enhanced_multi_column_pipeline",
             "type": "debugpy",
             "request": "launch",
             "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "predict",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/predict.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "--create_template"
+            ]
+
+        },
+        {
+            "name": "predict - alternative",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/predict.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            },
+            "args": [
+                "--models", "data/my_results/comprehensive_pipeline_results.json", 
+                "--video", "/users/9/reine097/projects/auto-label-emotions/data/clip05/in/clip5_AHKJ.mp4",
+                "--output", "/users/9/reine097/projects/auto-label-emotions/data/clip05/out/pred.csv",
+                "--interval", "1000",
+                "--verbose"
+            ]
+
+        },
+        {
+            "name": "debug_predictions",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/debug_predictions.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+
+        },
+        {
+            "name": "quick_prediction_fix",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/quick_prediction_fix.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+
+        },
+        {
+            "name": "test_single_prediction",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/test_single_prediction.py",
             "console": "integratedTerminal",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/src"
