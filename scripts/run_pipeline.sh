@@ -14,4 +14,5 @@ cd /users/9/reine097/projects/auto-label-emotions/ || exit
 export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects/auto-label-emotions/src"
 
 /usr/bin/env /users/9/reine097/projects/auto-label-emotions/.venv/bin/python \
-  /users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py
+  /users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py \
+  --config data/config_file_example.json --verbose
