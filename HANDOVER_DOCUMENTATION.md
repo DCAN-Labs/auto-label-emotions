@@ -46,5 +46,8 @@ Fix: Add --default flag
   * Processing: Varies based on video length and resolution
 - Disk space needed: ~500 MB for trained models, ~2 GB for training data
 
-## EMERGENCY CONTACTS
-Your name: [email/phone for first 2 weeks]
+## EMERGENCY CONTACT
+Paul Reiners:
+* [paul.reiners@gmail.com](mailto:paul.reiners@gmail.com) 
+* 952 846-7749
+
