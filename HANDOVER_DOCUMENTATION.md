@@ -6,21 +6,20 @@
 - Known working configuration and commands
 
 ## QUICK START - COPY/PASTE THESE COMMANDS
-[Test these commands NOW and document exactly what works]
+
+For now, use my existing Python environment.  You should later create your own Python environment with the necessary dependencies.
 
 # Environment setup
-    cd ~/projects-2/ # Or an appropriate folder
-    git clone git@github.com:DCAN-Labs/auto-label-emotions.git
-    cd auto-label-emotions/
+    cd /users/9/reine097/projects/auto-label-emotions/
     module load python3
-    python -m venv .venv
     source .venv/bin/activate
-    pip install -r requirements.txt
 
-# Test prediction (verify this works)
-python predict.py --models data/my_results/comprehensive_pipeline_results.json \
-                  --video data/clip01/in/clip1_MLP.mp4 \
-                  --output test_handover.csv
+# Test prediction
+    export PYTHONPATH="/users/9/reine097/projects/auto-label-emotions/src:$PYTHONPATH"
+    python src/enhanced_pipeline/predict.py \
+        --models data/my_results/comprehensive_pipeline_results.json \
+        --video data/clip01/in/clip1_MLP.mp4 \
+        --output test_handover.csv
 
 # Train new models (if needed)
 python src/enhanced_pipeline/main.py --default
