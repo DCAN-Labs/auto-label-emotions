@@ -22,7 +22,9 @@ For now, use my existing Python environment.  You should later create your own P
         --output test_handover.csv
 
 # Train new models (if needed)
-python src/enhanced_pipeline/main.py --default
+    ssh -Y agate
+    cd /users/9/reine097/projects/auto-label-emotions/scripts
+    sbatch run_pipeline.sh
 
 ## CRITICAL FILES LOCATIONS
 - Trained models: data/my_results/*.pth
