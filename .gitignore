@@ -256,5 +256,8 @@ pixar_emotions/Woody_Toy_Story_surprised/000003.jpg
 cartoon_face_detector_pytorch.pth
 annotated_videos/clip1_positive_only_results.json
 annotated_videos/clip1_positive_only.mp4
-scripts/emo-codes-41293059.err
-scripts/emo-codes-41293059.out
+scripts/emo-codes-*.err
+scripts/emo-codes-*.out
+temp_frames_*/*.jpg
+test_handover.csv
+test_timing.csv
