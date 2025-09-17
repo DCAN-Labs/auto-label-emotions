@@ -35,16 +35,16 @@ For now, use my existing Python environment.  You should later create your own P
   * Training: [scripts/run_pipeline.sh](./scripts/run_pipeline.sh)
 
 ## KNOWN ISSUES & FIXES
-Issue: All predictions show 0
-Fix: [Document the exact fix we discussed]
 
 Issue: Config file required error
 Fix: Add --default flag
 
 ## PERFORMANCE BENCHMARKS
 - Training time: ~3.6 minutes per model
-- Prediction speed: [test and document]
-- Disk space needed: [check actual usage]
+- Prediction speed: ~12-15 seconds for a 14.6 MB video file
+  * Model loading: ~10-12 seconds for all 22 models
+  * Processing: Varies based on video length and resolution
+- Disk space needed: ~500 MB for trained models, ~2 GB for training data
 
 ## EMERGENCY CONTACTS
 Your name: [email/phone for first 2 weeks]
