@@ -30,7 +30,9 @@ For now, use my existing Python environment.  You should later create your own P
 - Trained models: data/my_results/*.pth
 - Results summary: data/my_results/comprehensive_pipeline_results.json
 - Training data: data/clip*/
-- Main scripts: predict.py, src/enhanced_pipeline/main.py
+- Main scripts: 
+  * Prediction: [src/enhanced_pipeline/predict.py](./src/enhanced_pipeline/predict.py)
+  * Training: [scripts/run_pipeline.sh](./scripts/run_pipeline.sh)
 
 ## KNOWN ISSUES & FIXES
 Issue: All predictions show 0
