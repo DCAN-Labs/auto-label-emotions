@@ -14,7 +14,7 @@
   - Known issues and their solutions
 
 ### Technical Inventory
-- [ ] **Document all dependencies** and versions
+- [X] **Document all dependencies** and versions
 - [ ] **Verify environment setup** instructions work on clean machine
 - [X] **List all data files** and their purposes
 - [ ] **Inventory trained models** (22 successful classifiers)
