@@ -4,7 +4,7 @@
 
 ### Create Handover Package
 - [X] **Complete project documentation** (see main handover guide)
-- [ ] **Record video walkthrough** (~30 minutes) showing:
+- [X] **Record video walkthrough** (~30 minutes) showing:
   - How to run the pipeline from start to finish
   - How to interpret results
   - Common troubleshooting scenarios
