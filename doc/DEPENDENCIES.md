@@ -18,16 +18,25 @@ cd auto-label-emotions/
 ### Quick Setup
 ```bash
 # Load Python module (on HPC systems)
-module load python3
+module load python3/3.11  # Important: Need Python 3.11+
 
 # Create virtual environment
-python -m venv .venv
+python3.11 -m venv .venv
 
 # Activate virtual environment
 source .venv/bin/activate
 
-# Install all dependencies
+# Install all dependencies (exact versions)
 pip install -r requirements.txt
+
+# OR if you get version conflicts, use minimal requirements:
+pip install -r requirements-minimal.txt
+```
+
+### Alternative Setup (if Python 3.11 not available)
+```bash
+# Use minimal requirements that work with Python 3.8+
+pip install -r requirements-minimal.txt
 ```
 
 ## Core Dependencies
