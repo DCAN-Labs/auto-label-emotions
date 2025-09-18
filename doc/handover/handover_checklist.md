@@ -22,9 +22,9 @@
 ## Day 3-4: Hands-on Training Session
 
 ### Live Demo Session (2-3 hours)
-- [ ] **Run complete pipeline** with colleague watching
-- [ ] **Show prediction workflow** on new video
-- [ ] **Demonstrate configuration system**
+- [X] **Run complete pipeline** with colleague watching
+- [X] **Show prediction workflow** (video recorded by Sanju)
+- [X] **Demonstrate configuration system**
 - [ ] **Walk through common error scenarios**
 
 ### Colleague Practice Time
