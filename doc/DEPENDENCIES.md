@@ -7,6 +7,14 @@
 
 ## Installation Instructions
 
+### Getting source code
+```bash
+# Adjust path to your own file system as needed
+cd /users/9/reine097/projects-2/
+git clone git@github.com:DCAN-Labs/auto-label-emotions.git
+cd auto-label-emotions/
+```
+
 ### Quick Setup
 ```bash
 # Load Python module (on HPC systems)
