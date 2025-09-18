@@ -18,10 +18,10 @@ cd auto-label-emotions/
 ### Quick Setup
 ```bash
 # Load Python module (on HPC systems)
-module load python3/3.11  # Important: Need Python 3.11+
+module load python3/3.12.4_anaconda2024.06-1_libmamba  # Important: Need Python 3.11+
 
 # Create virtual environment
-python3.11 -m venv .venv
+python3.12 -m venv .venv
 
 # Activate virtual environment
 source .venv/bin/activate
