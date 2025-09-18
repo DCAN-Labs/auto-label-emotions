@@ -14,17 +14,19 @@ For now, use my existing Python environment.  You should later create your own P
     module load python3
     source .venv/bin/activate
 
+# Train new models (if needed)
+    ssh -Y agate
+    cd /users/9/reine097/projects-2/auto-label-emotions/scripts
+    sbatch run_pipeline.sh
+
 # Test prediction
-    export PYTHONPATH="/users/9/reine097/projects/auto-label-emotions/src:$PYTHONPATH"
+    # Assumes models are already created.
+    # Changes paths to fit your file system.
+    export PYTHONPATH="/users/9/reine097/projects-2/auto-label-emotions/src:$PYTHONPATH"
     python src/enhanced_pipeline/predict.py \
         --models data/my_results/comprehensive_pipeline_results.json \
         --video data/clip01/in/clip1_MLP.mp4 \
         --output test_handover.csv
-
-# Train new models (if needed)
-    ssh -Y agate
-    cd /users/9/reine097/projects/auto-label-emotions/scripts
-    sbatch run_pipeline.sh
 
 ## CRITICAL FILES LOCATIONS
 - Trained models: data/my_results/*.pth

@@ -10,9 +10,9 @@
 #SBATCH -e emo-codes-%j.err
 #SBATCH -o emo-codes-%j.out
 
-cd /users/9/reine097/projects/auto-label-emotions/ || exit
-export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects/auto-label-emotions/src"
+cd /users/9/reine097/projects-2/auto-label-emotions/ || exit
+export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects-2/auto-label-emotions/src"
 
-/usr/bin/env /users/9/reine097/projects/auto-label-emotions/.venv/bin/python \
-  /users/9/reine097/projects/auto-label-emotions/src/enhanced_pipeline/main.py \
+/usr/bin/env /users/9/reine097/projects-2/auto-label-emotions/.venv/bin/python \
+  /users/9/reine097/projects-2/auto-label-emotions/src/enhanced_pipeline/main.py \
   --config data/config_file_example.json --verbose
