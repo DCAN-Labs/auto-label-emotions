@@ -40,8 +40,7 @@
 - **Repository:** [score-conners-3](https://github.com/DCAN-Labs/score-conners-3)
 
 ### Documentation
-- **Location:** [Documentation location/URL]
-- **Access:** [How to request access]
+- **Location:** [Documentation](https://github.com/DCAN-Labs/auto-label-emotions/tree/main/doc)
 ---
 
 *Last Updated: 9/19/2025*
