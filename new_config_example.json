@@ -1,0 +1,18 @@
+{
+  "video_list": [
+    "path/to/your/video1.mp4",
+    "path/to/your/video2.mp4"
+  ],
+  "clip_mapping": {
+    "video1_name": "path/to/your/annotations1.csv",
+    "video2_name": "path/to/your/annotations2.csv"
+  },
+  "pipeline_settings": {
+    "base_output_dir": "data/my_results",
+    "debug": false,
+    "frame_interval_ms": 100,
+    "skip_extraction": false,
+    "create_visualizations": true,
+    "verbose": true
+  }
+}

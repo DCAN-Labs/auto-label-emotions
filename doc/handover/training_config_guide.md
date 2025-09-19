@@ -32,8 +32,8 @@ This minimal config will:
 
 ```bash
 # Adjust file paths as needed for you MSI folders.
-cd /users/9/reine097/projects-2/auto-label-emotions/ || exit
-export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects-2/auto-label-emotions/src"
+cd /users/9/reine097/projects/auto-label-emotions/ || exit
+export PYTHONPATH=PYTHONPATH:"/users/9/reine097/projects/auto-label-emotions/src"
 
 python src/enhanced_pipeline/main.py --config \
     data/configuration/my_training_config.json
