@@ -3,6 +3,10 @@
 ## Overview
 This document provides a comprehensive inventory of all trained models in the auto-label-emotions project, including their purpose, location, size, and performance metrics.
 
+Some sample pre-trained models are located here:
+
+* `/home/feczk001/shared/data/score-conners-3/trained_models.zip`
+
 ## Core Models
 
 ### 1. Face Detection Models
